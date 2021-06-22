@@ -31,7 +31,23 @@ pipeline {
                 }
             }
         }
-        
+      
+        stage('Canary Deployment') {
+            when {
+                branch 'main'
+            }
+            environment { 
+                CANARY_REPLICAS = 1
+            }
+            steps {
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'Deployment-canary.yaml',
+                    enableConfigSubstitution: true
+                )
+            }
+        }        
+  
         stage('Application Deployment') {
             when {
                 branch 'main'
@@ -46,6 +62,6 @@ pipeline {
                 )
             }
         }
-      
+        
     }
 }

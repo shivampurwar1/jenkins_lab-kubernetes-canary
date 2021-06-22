@@ -52,9 +52,17 @@ pipeline {
             when {
                 branch 'main'
             }
+            environment { 
+                CANARY_REPLICAS = 0
+            }
             steps {
                 input 'Deploy to Prod?'
                 milestone(1)
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'Deployment-canary.yaml',
+                    enableConfigSubstitution: true
+                )
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'Deployment.yaml',
